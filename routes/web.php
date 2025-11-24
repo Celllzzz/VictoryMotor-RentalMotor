@@ -11,24 +11,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 // --- AUTHENTICATED ROUTES ---
 Route::middleware(['auth'])->group(function () {
 
     // === ROLE: CUSTOMER (USER) ===
     Route::middleware('role:user')->group(function () {
-        // Step 1: Pilih Tanggal
+        // 1. DASHBOARD
+        Route::get('/dashboard', [BookingController::class, 'dashboard'])->name('dashboard');
+
+        // 2. BOOKING & HISTORY
         Route::get('/booking', [BookingController::class, 'step1'])->name('booking.step1');
-        
-        // Step 2: Cari Motor & Hitung Harga
         Route::post('/booking/search', [BookingController::class, 'step2_search'])->name('booking.search');
-        
-        // Step 3: Proses Booking & Bayar
         Route::post('/booking/process', [BookingController::class, 'processBooking'])->name('booking.process');
-        
-        // Step 4: Sukses
         Route::get('/booking/success', [BookingController::class, 'success'])->name('booking.success');
         
-        // History & Upload Bukti (Opsional jika bayar manual)
         Route::get('/history', [BookingController::class, 'history'])->name('booking.history');
     });
 

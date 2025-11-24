@@ -9,7 +9,28 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class BookingController extends Controller
-{
+{   
+    public function dashboard()
+    {
+        $user = Auth::user();
+        
+        // Ambil data ringkasan
+        $totalBookings = Pesanan::whereHas('pemesan', function($q) use ($user) {
+            $q->where('id_akun', $user->id);
+        })->count();
+
+        $activeBookings = Pesanan::whereHas('pemesan', function($q) use ($user) {
+            $q->where('id_akun', $user->id);
+        })->whereIn('status', ['pending', 'dibayar', 'disetujui'])->count();
+
+        // Ambil 3 history terakhir untuk ditampilkan di dashboard
+        $recentOrders = Pesanan::whereHas('pemesan', function($q) use ($user) {
+            $q->where('id_akun', $user->id);
+        })->with(['motor', 'jenisBayar'])->latest()->take(3)->get();
+
+        return view('dashboard', compact('totalBookings', 'activeBookings', 'recentOrders'));
+    }
+    
     // STEP 1: Tampilkan Form Tanggal
     public function step1()
     {
