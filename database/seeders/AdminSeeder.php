@@ -12,11 +12,9 @@ class AdminSeeder extends Seeder
     {
         User::create([
             'nama' => 'Administrator',
-            'username' => 'admin',
             'email' => 'admin@victory.com',
             'password' => Hash::make('password123'), // Password admin
             'role' => 'admin',
-            'foto' => null,
         ]);
     }
 }

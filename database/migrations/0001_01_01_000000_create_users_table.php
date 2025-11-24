@@ -15,12 +15,10 @@ return new class extends Migration
     Schema::create('tbl_akun', function (Blueprint $table) {
         $table->id();
         $table->string('nama'); // Sesuai request (pengganti name)
-        $table->string('username')->unique(); // Tambahan sesuai request
         $table->string('email')->unique(); // Tetap pertahankan untuk fitur Breeze (reset password)
         $table->timestamp('email_verified_at')->nullable();
         $table->string('password');
         $table->enum('role', ['admin', 'user'])->default('user'); // Tambahan
-        $table->string('foto')->nullable(); // Tambahan
         $table->rememberToken();
         $table->timestamps();
     });

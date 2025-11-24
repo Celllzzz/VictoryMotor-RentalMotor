@@ -8,7 +8,7 @@ use App\Http\Controllers\Customer\BookingController;
 
 // --- HALAMAN DEPAN (Redirect ke login atau booking jika sudah login) ---
 Route::get('/', function () {
-    return auth()->check() ? redirect()->route('booking.step1') : view('auth.login');
+    return view('welcome');
 });
 
 // --- AUTHENTICATED ROUTES ---

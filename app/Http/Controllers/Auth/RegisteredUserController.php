@@ -31,14 +31,12 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'nama' => ['required', 'string', 'max:255'], // ganti name jadi nama
-            'username' => ['required', 'string', 'max:255', 'unique:tbl_akun'], // tambah username
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:tbl_akun'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'nama' => $request->nama,
-            'username' => $request->username,
             'email' => $request->email,
             'role' => 'user', // Default role
             'password' => Hash::make($request->password),
