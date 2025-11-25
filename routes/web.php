@@ -2,73 +2,50 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-// Import Controller Admin
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MotorController;
 use App\Http\Controllers\Admin\TransaksiController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-// Import Controller User
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Customer\BookingController;
 
-// --- 1. HALAMAN DEPAN & REDIRECT LOGIN ---
+// --- 1. HALAMAN DEPAN (LANDING PAGE) ---
 Route::get('/', function () {
-    if (auth()->check()) {
-        // Cek role untuk redirect ke dashboard yang benar
-        if (auth()->user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-        return redirect()->route('dashboard');
+    if (auth()->check() && auth()->user()->role === 'admin') {
+        return redirect()->route('admin.dashboard');
     }
     return view('welcome');
+})->name('home');
+
+// --- 2. GROUP USER (CUSTOMER) ---
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
+    
+    // Flow Booking Baru
+    Route::get('/booking', [BookingController::class, 'step1'])->name('booking.step1'); // Pilih Tanggal
+    Route::post('/booking/search', [BookingController::class, 'step2_search'])->name('booking.search'); // Proses Cari
+    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store'); // Simpan Data Awal
+    
+    // Halaman Pembayaran (Timer & Upload)
+    Route::get('/booking/payment/{id}', [BookingController::class, 'payment'])->name('booking.payment');
+    Route::post('/booking/payment/{id}', [BookingController::class, 'processPayment'])->name('booking.process_payment');
+
+    Route::get('/booking/success', [BookingController::class, 'success'])->name('booking.success');
+    
+    // History
+    Route::get('/history', [BookingController::class, 'history'])->name('booking.history');
 });
 
-// --- 2. ROUTE YANG BUTUH LOGIN (AUTH) ---
-Route::middleware(['auth', 'verified'])->group(function () {
+// --- 3. GROUP ADMIN (Tetap) ---
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('motor', MotorController::class);
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::post('/transaksi/verifikasi/{id}', [TransaksiController::class, 'verifikasi'])->name('transaksi.verifikasi');
+    Route::post('/transaksi/kembali/{id}', [TransaksiController::class, 'kembalikan'])->name('transaksi.kembali');
+    Route::resource('users', AdminUserController::class);
+});
 
-    // === A. USER / CUSTOMER ROUTES ===
-    // Dashboard User (Hanya bisa diakses role:user)
-    Route::get('/dashboard', [BookingController::class, 'dashboard'])
-        ->middleware('role:user')
-        ->name('dashboard');
-
-    // Group Fitur User
-    Route::middleware('role:user')->group(function () {
-        // Flow Booking
-        Route::get('/booking', [BookingController::class, 'step1'])->name('booking.step1');
-        Route::post('/booking/search', [BookingController::class, 'step2_search'])->name('booking.search');
-        Route::post('/booking/process', [BookingController::class, 'processBooking'])->name('booking.process');
-        Route::get('/booking/success', [BookingController::class, 'success'])->name('booking.success');
-        
-        // History
-        Route::get('/history', [BookingController::class, 'history'])->name('booking.history');
-    });
-
-
-    // === B. ADMIN ROUTES ===
-    // Semua route admin ada di bawah prefix '/admin'
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        
-        // Dashboard Admin
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        
-        // Manajemen Motor (CRUD Otomatis: index, create, store, edit, update, destroy)
-        Route::resource('motor', MotorController::class);
-        
-        // Manajemen Transaksi
-        // 1. Halaman List Transaksi (Ini yang sebelumnya error 'Route Not Found')
-        Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-        
-        // 2. Proses Verifikasi (Terima/Tolak)
-        Route::post('/transaksi/verifikasi/{id}', [TransaksiController::class, 'verifikasi'])->name('transaksi.verifikasi');
-        
-        // 3. Proses Pengembalian (Selesai)
-        Route::post('/transaksi/kembali/{id}', [TransaksiController::class, 'kembalikan'])->name('transaksi.kembalikan');
-
-        // Manajemen Admina
-        Route::resource('users', \App\Http\Controllers\Admin\AdminUserController::class);
-    });
-
-
-    // === C. PROFILE ROUTES (Bawaan Breeze) ===
+// --- 4. PROFILE ---
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

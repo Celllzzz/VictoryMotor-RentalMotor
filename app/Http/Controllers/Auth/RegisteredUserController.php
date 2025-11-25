@@ -29,16 +29,18 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validasi 
         $request->validate([
-            'nama' => ['required', 'string', 'max:255'], // ganti name jadi nama
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:tbl_akun'],
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:tbl_akun'], // Pastikan tabel 'tbl_akun' atau 'users' sesuai db
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // Create User 
         $user = User::create([
             'nama' => $request->nama,
             'email' => $request->email,
-            'role' => 'user', // Default role
+            'role' => 'user', // Default user
             'password' => Hash::make($request->password),
         ]);
 
@@ -46,6 +48,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // REDIRECT KE HALAMAN DEPAN
+        return redirect(url('/'));
     }
 }
