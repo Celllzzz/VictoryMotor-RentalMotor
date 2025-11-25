@@ -2,22 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\{User, JenisBayar};
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. User Admin & Test User
+        $this->call(AdminSeeder::class);
         
-        // Panggil AdminSeeder juga kalau mau sekalian
+        // 2. Jenis Bayar
+        if(JenisBayar::count() == 0){
+            JenisBayar::insert([
+                ['jenis_bayar' => 'VA BANK'],
+                ['jenis_bayar' => 'QRIS'],
+            ]);
+        }
+
+        // 3. Motor & Pesanan (BARU)
         $this->call([
-            AdminSeeder::class,
+            MotorSeeder::class,
+            PesananSeeder::class,
         ]);
     }
 }

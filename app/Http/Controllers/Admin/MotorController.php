@@ -9,9 +9,36 @@ use Illuminate\Support\Facades\Storage;
 
 class MotorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $motors = Motor::latest()->get();
+        $query = Motor::query();
+
+        // 1. SMART SEARCH LOGIC (Multi-word)
+        if ($request->has('search') && $request->search != '') {
+            $keywords = explode(' ', $request->search); // Pecah kalimat jadi kata-kata
+            
+            $query->where(function($q) use ($keywords) {
+                foreach ($keywords as $word) {
+                    $q->where(function($subQ) use ($word) {
+                        $subQ->where('nama', 'like', "%{$word}%")
+                            ->orWhere('merk', 'like', "%{$word}%")
+                            ->orWhere('warna', 'like', "%{$word}%")
+                            ->orWhere('no_polisi', 'like', "%{$word}%");
+                    });
+                }
+            });
+        }
+
+        // 2. Filter Status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // 3. Pagination
+        $perPage = $request->input('per_page', 10);
+        $motors = $query->latest()->paginate($perPage)->withQueryString();
+
+        // Jika request dari AJAX (Ketik-ketik), return view utuh (akan diparsing JS)
         return view('admin.motor.index', compact('motors'));
     }
 
@@ -23,22 +50,25 @@ class MotorController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama' => 'required',
-            'merk' => 'required', // String biasa
-            'warna' => 'required',
-            'no_polisi' => 'required|unique:tbl_motor',
-            'tahun_beli' => 'required|integer',
-            'harga_sewa' => 'required|integer',
-            'gambar' => 'required|image|max:2048',
+            'nama' => 'required|string|max:255',
+            'merk' => 'required|string|max:255', // Input manual string
+            'warna' => 'required|string',
+            'no_polisi' => 'required|unique:tbl_motor,no_polisi',
+            'tahun_beli' => 'required|integer|min:2000|max:'.(date('Y')+1),
+            'harga_sewa' => 'required|integer|min:0',
+            'gambar' => 'required|image|max:2048', // Max 2MB
         ]);
 
         // Upload Gambar
-        $data['gambar'] = $request->file('gambar')->store('motor_images', 'public');
-        $data['status'] = 'tersedia';
+        if ($request->hasFile('gambar')) {
+            $data['gambar'] = $request->file('gambar')->store('motor_images', 'public');
+        }
+        
+        $data['status'] = 'tersedia'; // Default status
 
         Motor::create($data);
 
-        return redirect()->route('admin.motor.index')->with('success', 'Motor berhasil ditambahkan');
+        return redirect()->route('admin.motor.index')->with('success', 'Motor berhasil ditambahkan!');
     }
 
     public function edit(Motor $motor)
@@ -49,36 +79,42 @@ class MotorController extends Controller
     public function update(Request $request, Motor $motor)
     {
         $rules = [
-            'nama' => 'required',
-            'merk' => 'required',
-            'warna' => 'required',
+            'nama' => 'required|string|max:255',
+            'merk' => 'required|string|max:255',
+            'warna' => 'required|string',
             'tahun_beli' => 'required|integer',
             'harga_sewa' => 'required|integer',
             'gambar' => 'nullable|image|max:2048',
         ];
 
-        // Cek unik plat nomor jika berubah
+        // Cek unik plat nomor kecuali milik motor ini sendiri
         if ($request->no_polisi != $motor->no_polisi) {
-            $rules['no_polisi'] = 'required|unique:tbl_motor';
+            $rules['no_polisi'] = 'required|unique:tbl_motor,no_polisi';
         }
 
         $data = $request->validate($rules);
 
-        // Cek jika ganti gambar
         if ($request->hasFile('gambar')) {
-            if ($motor->gambar) Storage::disk('public')->delete($motor->gambar);
+            // Hapus gambar lama jika ada (dan bukan placeholder/link luar)
+            if ($motor->gambar && !filter_var($motor->gambar, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($motor->gambar);
+            }
             $data['gambar'] = $request->file('gambar')->store('motor_images', 'public');
         }
 
         $motor->update($data);
 
-        return redirect()->route('admin.motor.index')->with('success', 'Motor berhasil diupdate');
+        return redirect()->route('admin.motor.index')->with('success', 'Data motor diperbarui!');
     }
 
     public function destroy(Motor $motor)
     {
-        if ($motor->gambar) Storage::disk('public')->delete($motor->gambar);
+        // Hapus gambar fisik
+        if ($motor->gambar && !filter_var($motor->gambar, FILTER_VALIDATE_URL)) {
+            Storage::disk('public')->delete($motor->gambar);
+        }
+        
         $motor->delete();
-        return back()->with('success', 'Motor dihapus');
+        return back()->with('success', 'Motor berhasil dihapus!');
     }
 }
