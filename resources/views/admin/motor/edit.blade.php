@@ -56,9 +56,41 @@
                 </div>
 
                 <div class="mb-8">
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Change Image (Optional)</label>
-                    <input type="file" name="gambar" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-victory file:text-black hover:file:bg-yellow-400"/>
+                    <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Change Image</label>
+                    
+                    <div class="flex items-center gap-6">
+                        <div class="w-32 h-32 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 relative">
+                            <img id="edit-preview" 
+                                src="{{ filter_var($motor->gambar, FILTER_VALIDATE_URL) ? $motor->gambar : asset('storage/'.$motor->gambar) }}" 
+                                class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="flex-1">
+                            <input type="file" name="gambar" accept="image/*" onchange="previewEditImage(event)"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-black file:text-white hover:file:bg-victory hover:file:text-black transition-colors cursor-pointer"/>
+                            <p class="text-xs text-gray-400 mt-2">Leave blank to keep current image. Max 2MB.</p>
+                            
+                            @error('gambar')
+                                <p class="text-red-500 text-xs mt-2 font-bold">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
+
+                <script>
+                    function previewEditImage(event) {
+                        const input = event.target;
+                        const preview = document.getElementById('edit-preview');
+
+                        if (input.files && input.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                preview.src = e.target.result;
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    }
+                </script>
 
                 <div class="flex justify-end">
                     <button type="submit" class="px-8 py-4 bg-victory text-black font-black uppercase tracking-widest rounded-lg hover:bg-yellow-400 shadow-lg">

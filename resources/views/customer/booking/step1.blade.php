@@ -58,7 +58,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-black text-white py-5 rounded-xl font-black uppercase tracking-[0.2em] text-sm hover:bg-victory hover:text-black hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 group">
+                    <button type="submit" class="w-full bg-black text-white py-5 rounded-xl font-black uppercase tracking-[0.2em] text-sm hover:bg-victory hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 group">
                         <span>Find Available Bikes</span>
                         <svg class="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </button>

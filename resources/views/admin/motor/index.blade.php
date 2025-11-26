@@ -6,7 +6,7 @@
             <h1 class="text-2xl font-black text-gray-900 uppercase">Motorcycle Inventory</h1>
             <p class="text-sm text-gray-500">Manage fleet, pricing, and availability.</p>
         </div>
-        <a href="{{ route('admin.motor.create') }}" class="px-6 py-3 bg-black text-white font-bold uppercase tracking-wider rounded-lg hover:bg-victory hover:text-black transition-all shadow-lg flex items-center gap-2">
+        <a href="{{ route('admin.motor.create') }}" class="px-6 py-3 bg-black text-white font-bold uppercase tracking-wider rounded-lg hover:bg-victory hover: transition-all shadow-lg flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Add New Bike
         </a>

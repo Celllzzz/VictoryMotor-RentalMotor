@@ -23,13 +23,22 @@
             </div>
         </div>
 
-        <a href="{{ route('admin.transaksi.index') }}" class="bg-victory p-6 rounded-xl shadow-md flex items-center gap-4 hover:shadow-lg hover:bg-yellow-300 transition-all cursor-pointer group">
-            <div class="p-4 bg-white/30 rounded-full text-black group-hover:bg-white group-hover:scale-110 transition-transform">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+        <a href="{{ route('admin.transaksi.index') }}" class="bg-green-500 p-6 rounded-xl shadow-md flex items-center gap-4 hover:shadow-lg hover:bg-green-400 transition-all cursor-pointer group">
+            {{-- Icon Container --}}
+            <div class="p-4 bg-white/20 rounded-full text-white group-hover:bg-white group-hover:text-green-600 group-hover:scale-110 transition-transform">
+                {{-- Icon: Clipboard Check (Menggambarkan proses verifikasi dokumen/data) --}}
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
             </div>
+
+            {{-- Text Content --}}
             <div>
-                <p class="text-xs font-bold text-black/60 uppercase tracking-widest">Action Needed</p>
-                <p class="text-2xl font-black text-black">{{ $pesananPending }} <span class="text-sm font-bold">Pending</span></p>
+                <p class="text-xs font-bold text-white/80 uppercase tracking-widest mb-1">Verification Needed</p>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-3xl font-black text-white">{{ $pesananDibayar }}</p>
+                    <span class="text-sm font-bold text-white">Paid Orders</span>
+                </div>
             </div>
         </a>
 
@@ -69,12 +78,21 @@
                         <td class="px-6 py-4">
                             @if($order->status == 'pending')
                                 <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-bold uppercase">Pending</span>
+                            
+                            @elseif($order->status == 'dibayar')
+                                <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded font-bold uppercase">Paid</span>
+                            
                             @elseif($order->status == 'disetujui')
                                 <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold uppercase">Active</span>
+                            
                             @elseif($order->status == 'selesai')
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-bold uppercase">Done</span>
+                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-bold uppercase">Completed</span>
+                            
+                            @elseif($order->status == 'ditolak')
+                                <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded font-bold uppercase">Rejected</span>
+                            
                             @else
-                                <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded font-bold uppercase">{{ $order->status }}</span>
+                                <span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded font-bold uppercase">{{ $order->status }}</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right">

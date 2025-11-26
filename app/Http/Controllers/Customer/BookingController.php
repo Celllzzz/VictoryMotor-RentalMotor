@@ -109,7 +109,7 @@ class BookingController extends Controller
         
         $pesanan->update([
             'bukti_bayar' => $path,
-            'status' => 'pending' // Masuk ke admin untuk diverifikasi
+            'status' => 'dibayar' // Masuk ke admin untuk diverifikasi
         ]);
 
         return redirect()->route('booking.success');
@@ -117,11 +117,36 @@ class BookingController extends Controller
 
     public function success() { return view('customer.booking.success'); }
 
-    public function history()
+    public function history(Request $request)
     {
-        $pesanans = Pesanan::whereHas('pemesan', function($q){
+        $query = Pesanan::whereHas('pemesan', function($q){
             $q->where('id_akun', Auth::id());
-        })->with(['motor', 'jenisBayar'])->latest()->get();
+        })->with(['motor', 'jenisBayar']);
+
+        // Filter Search (ID Pesanan atau Nama Motor)
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                  ->orWhereHas('motor', function($subQ) use ($search) {
+                      $subQ->where('nama', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter Status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        $perPage = $request->per_page ?? 10;
+        $pesanans = $query->latest()->paginate($perPage)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('customer.history', compact('pesanans'))->render(); 
+            // Note: Pada practice Laravel modern biasanya partial view, 
+            // tapi mengikuti pola referensi admin Anda yang me-replace container, kita return view utuh.
+        }
 
         return view('customer.history', compact('pesanans'));
     }

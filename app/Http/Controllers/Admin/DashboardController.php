@@ -19,7 +19,7 @@ class DashboardController extends Controller
         
         // 2. Transaksi
         // Menghitung pesanan yang butuh verifikasi (Pending)
-        $pesananPending = Pesanan::where('status', 'pending')->count();
+        $pesananDibayar = Pesanan::where('status', 'dibayar')->count();
         
         // Menghitung total pendapatan (hanya dari yang selesai/disetujui)
         $totalPendapatan = Pesanan::whereIn('status', ['selesai', 'disetujui'])->sum('total_harga');
@@ -34,7 +34,7 @@ class DashboardController extends Controller
             'totalMotor', 
             'motorTersedia', 
             'motorDisewa', 
-            'pesananPending', 
+            'pesananDibayar', 
             'totalPendapatan',
             'recentOrders'
         ));

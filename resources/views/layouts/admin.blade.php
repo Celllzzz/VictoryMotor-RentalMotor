@@ -22,7 +22,8 @@
                 showConfirmButton: false,
                 background: '#fff',
                 iconColor: '#F4E06D',
-                confirmButtonColor: '#000'
+                confirmButtonColor: '#000',
+                reverseButtons: true
             });
         @endif
 
@@ -32,7 +33,8 @@
                 icon: 'error',
                 title: 'Oops...',
                 text: '{{ session('error') }}',
-                confirmButtonColor: '#000'
+                confirmButtonColor: '#000',
+                reverseButtons: true,
             });
         @endif
 
@@ -46,7 +48,8 @@
                 confirmButtonColor: '#F4E06D',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, proceed!',
-                color: '#000'
+                color: '#000',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(formId).submit();

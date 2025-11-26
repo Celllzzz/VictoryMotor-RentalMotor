@@ -15,12 +15,12 @@
         </h1>
         
         <div class="max-w-md mx-auto space-y-2 text-gray-500 mb-10">
-            <p class="text-lg">Terima kasih sudah melakukan pembayaran.</p>
-            <p class="text-sm">Tim kami akan segera memverifikasi bukti bayar Anda. Silakan cek status pesanan di halaman History.</p>
+            <p class="text-lg">Thank you for making the payment.</p>
+            <p class="text-sm">Our team will verify your proof of payment immediately. Please check your order status on the History page.</p>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
-            <a href="{{ route('booking.history') }}" class="flex-1 px-8 py-4 bg-black text-white font-black uppercase tracking-widest rounded-lg shadow-lg hover:bg-victory hover:text-black transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">
+            <a href="{{ route('booking.history') }}" class="flex-1 px-8 py-4 bg-black text-white font-black uppercase tracking-widest rounded-lg shadow-lg hover:bg-victory hover:transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">
                 Check History
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
             </a>

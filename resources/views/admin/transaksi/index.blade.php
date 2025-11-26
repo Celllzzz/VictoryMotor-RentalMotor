@@ -142,9 +142,32 @@
                         </td>
 
                         <td class="px-6 py-4 text-center">
-                            
-                            @if($order->status == 'pending' || $order->status == 'dibayar')
+                            {{-- Logika Status PENDING (Cek Expired 1 Jam) --}}
+                            @if($order->status == 'pending')
+                                @php
+                                    // Hitung selisih jam antara waktu order dibuat dengan waktu sekarang
+                                    $orderTime = \Carbon\Carbon::parse($order->created_at);
+                                    $isExpired = $orderTime->diffInHours(now()) >= 1;
+                                @endphp
+
+                                @if($isExpired)
+                                    {{-- Tampilan jika sudah lebih dari 1 jam --}}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-100 text-red-600">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Expired
+                                    </span>
+                                @else
+                                    {{-- Tampilan jika masih dalam masa tunggu bayar --}}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-yellow-100 text-yellow-700 animate-pulse">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Waiting Payment
+                                    </span>
+                                @endif
+
+                            {{-- Logika Status DIBAYAR (Muncul Tombol Aksi) --}}
+                            @elseif($order->status == 'dibayar')
                                 <div class="flex justify-center gap-2">
+                                    {{-- Tombol Approve --}}
                                     <form id="approve-{{ $order->id }}" action="{{ route('admin.transaksi.verifikasi', $order->id) }}" method="POST" style="display:none;">
                                         @csrf <input type="hidden" name="aksi" value="terima">
                                     </form>
@@ -153,6 +176,7 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                     </button>
                                     
+                                    {{-- Tombol Reject --}}
                                     <form id="reject-{{ $order->id }}" action="{{ route('admin.transaksi.verifikasi', $order->id) }}" method="POST" style="display:none;">
                                         @csrf <input type="hidden" name="aksi" value="tolak">
                                     </form>
@@ -162,6 +186,7 @@
                                     </button>
                                 </div>
 
+                            {{-- Logika Status DISETUJUI (Tombol Return) --}}
                             @elseif($order->status == 'disetujui')
                                 <form id="return-{{ $order->id }}" action="{{ route('admin.transaksi.kembalikan', $order->id) }}" method="POST" style="display:none;">
                                     @csrf
@@ -172,8 +197,9 @@
                                     Return Bike
                                 </button>
 
+                            {{-- Status Lainnya (Selesai/Batal) --}}
                             @else
-                                <span class="text-gray-300 font-bold text-xs select-none">&mdash; Closed &mdash;</span>
+                                <span class="text-gray-300 font-bold text-xs select-none uppercase tracking-wide">&mdash; Closed &mdash;</span>
                             @endif
                         </td>
                     </tr>
