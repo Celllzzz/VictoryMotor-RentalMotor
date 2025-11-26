@@ -17,25 +17,39 @@ class BookingController extends Controller
     }
 
     // Step 2: Cari Motor
-    public function step2_search(Request $request)
+    public function processStep1(Request $request)
     {
         $request->validate([
             'tgl_pinjam' => 'required|date|after_or_equal:now',
             'tgl_kembali' => 'required|date|after:tgl_pinjam',
         ]);
 
-        session([
-            'booking_start' => $request->tgl_pinjam,
-            'booking_end' => $request->tgl_kembali
-        ]);
-
+        // Hitung Durasi
         $start = Carbon::parse($request->tgl_pinjam);
         $end = Carbon::parse($request->tgl_kembali);
         $durasiHari = ceil($start->floatDiffInHours($end) / 24);
         if ($durasiHari < 1) $durasiHari = 1;
 
-        session(['booking_days' => $durasiHari]);
+        // Simpan ke Session
+        session([
+            'booking_start' => $request->tgl_pinjam,
+            'booking_end' => $request->tgl_kembali,
+            'booking_days' => $durasiHari
+        ]);
 
+        // Redirect ke Route GET (Agar URL berubah jadi /booking/select-bike)
+        return redirect()->route('booking.step2');
+    }
+
+    // 2. Tampilkan Halaman Step 2 (Aman untuk Refresh/Redirect Back)
+    public function step2()
+    {
+        // Cek jika user akses langsung tanpa input tanggal
+        if (!session()->has('booking_start')) {
+            return redirect()->route('booking.step1');
+        }
+
+        $durasiHari = session('booking_days');
         $motors = Motor::where('status', 'tersedia')->get();
         $jenisBayar = JenisBayar::all(); 
 
@@ -48,7 +62,10 @@ class BookingController extends Controller
         $request->validate([
             'id_motor' => 'required',
             'id_jenis_bayar' => 'required',
-            // 'foto_ktp' validation dihapus disini, dipindah ke step sebelumnya atau biarkan nullable dulu
+            'foto_ktp' => 'required|image|max:2048', // Wajib, Gambar, Max 2MB
+            'alamat' => 'required|string',
+            'nik'            => 'required|numeric|digits:16', 
+            'jk'             => 'required|in:L,P',
         ]);
 
         $tglPinjam = session('booking_start');
@@ -67,8 +84,9 @@ class BookingController extends Controller
         $pemesan = Pemesan::create([
             'id_akun' => $user->id,
             'nama' => $user->nama,
+            'nik'           => $request->nik,
             'alamat' => $request->alamat ?? '-', 
-            'jenis_kelamin' => $request->jk ?? 'L',
+            'jenis_kelamin' => $request->jk,
             'foto_ktp' => $pathKtp
         ]);
 

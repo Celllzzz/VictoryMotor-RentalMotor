@@ -19,18 +19,18 @@ Route::get('/', function () {
 // --- 2. GROUP USER (CUSTOMER) ---
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     
-    // Flow Booking Baru
-    Route::get('/booking', [BookingController::class, 'step1'])->name('booking.step1'); // Pilih Tanggal
-    Route::post('/booking/search', [BookingController::class, 'step2_search'])->name('booking.search'); // Proses Cari
-    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store'); // Simpan Data Awal
+    // Step 1
+    Route::get('/booking', [BookingController::class, 'step1'])->name('booking.step1');
+    Route::post('/booking/search', [BookingController::class, 'processStep1'])->name('booking.search'); // Ubah nama function
     
-    // Halaman Pembayaran (Timer & Upload)
+    // Step 2 (BARU: Pisahkan Route GET agar aman saat refresh/validasi error)
+    Route::get('/booking/select-bike', [BookingController::class, 'step2'])->name('booking.step2'); 
+
+    // Step 3 & Payment
+    Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
     Route::get('/booking/payment/{id}', [BookingController::class, 'payment'])->name('booking.payment');
     Route::post('/booking/payment/{id}', [BookingController::class, 'processPayment'])->name('booking.process_payment');
-
     Route::get('/booking/success', [BookingController::class, 'success'])->name('booking.success');
-    
-    // History
     Route::get('/history', [BookingController::class, 'history'])->name('booking.history');
 });
 

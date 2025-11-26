@@ -108,9 +108,48 @@
                         </div>
 
                         <div class="space-y-4">
+                            
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1 tracking-wider">NIK (National ID)</label>
+                                <input type="text" name="nik" required maxlength="16" minlength="16" pattern="\d{16}"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)"
+                                    placeholder="16 Digit Number"
+                                    class="w-full bg-zinc-50 border-zinc-200 rounded-lg text-sm font-bold focus:border-black focus:ring-0 placeholder-zinc-300">
+                                <p class="text-[9px] text-zinc-400 mt-1">*Must be exactly 16 digits.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-2 tracking-wider">Gender</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    
+                                    <label class="relative flex items-center justify-center p-3 border border-zinc-200 overflow-hidden rounded-lg cursor-pointer transition-all duration-300 group hover:border-black hover:shadow-md">
+                                        <input type="radio" name="jk" value="L" class="peer hidden" required {{ old('jk') == 'L' ? 'checked' : '' }}>
+                                        
+                                        <div class="absolute inset-0 bg-victory transition-transform duration-300 origin-bottom scale-y-0 peer-checked:scale-y-100"></div>
+                                        
+                                        <span class="relative z-10 font-bold text-xs uppercase tracking-wide text-zinc-600 transition-colors duration-300 group-hover:text-black peer-checked:text-black flex items-center gap-2">
+                                            <span>Male (L)</span>
+                                            <svg class="w-4 h-4 opacity-0 -translate-x-2 peer-checked:opacity-100 peer-checked:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </span>
+                                    </label>
+
+                                    <label class="relative flex items-center justify-center p-3 border border-zinc-200 overflow-hidden rounded-lg cursor-pointer transition-all duration-300 group hover:border-black hover:shadow-md">
+                                        <input type="radio" name="jk" value="P" class="peer hidden" required {{ old('jk') == 'P' ? 'checked' : '' }}>
+                                        
+                                        <div class="absolute inset-0 bg-victory transition-transform duration-300 origin-bottom scale-y-0 peer-checked:scale-y-100"></div>
+                                        
+                                        <span class="relative z-10 font-bold text-xs uppercase tracking-wide text-zinc-600 transition-colors duration-300 group-hover:text-black peer-checked:text-black flex items-center gap-2">
+                                            <span>Female (P)</span>
+                                            <svg class="w-4 h-4 opacity-0 -translate-x-2 peer-checked:opacity-100 peer-checked:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </span>
+                                    </label>
+
+                                </div>
+                            </div>
+
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1 tracking-wider">Upload ID (KTP)</label>
-                                <input type="file" name="foto_ktp" required class="w-full text-[10px] text-zinc-500 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-zinc-100 file:text-zinc-800 hover:file:bg-victory hover:file:text-black cursor-pointer bg-zinc-50 rounded-lg border border-zinc-200">
+                                <input type="file" name="foto_ktp" required accept="image/*" class="w-full text-[10px] text-zinc-500 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-zinc-100 file:text-zinc-800 hover:file:bg-victory hover:file:text-black cursor-pointer bg-zinc-50 rounded-lg border border-zinc-200">
                             </div>
                             
                             <div>

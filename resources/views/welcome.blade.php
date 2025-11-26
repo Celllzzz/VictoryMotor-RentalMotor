@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600,800,900&display=swap" rel="stylesheet" />
 
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -98,10 +100,12 @@
                         </div>
 
                     @else
-                        <a href="{{ route('login') }}" class="text-xs font-bold uppercase tracking-[0.15em] text-zinc-400 hover:text-white transition-colors">
+                        <a href="{{ route('login') }}" class="relative group text-xs font-bold uppercase tracking-[0.15em] text-zinc-400 transition-colors duration-300 hover:text-white">
                             Log In
+                            <span class="absolute -bottom-1 left-0 w-0 h-[2px] bg-victory transition-all duration-300 group-hover:w-full"></span>
                         </a>
-                        <a href="{{ route('register') }}" class="px-5 py-2 border border-zinc-700 text-white text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-white hover:text-black hover:border-white transition-all">
+
+                        <a href="{{ route('register') }}" class="relative px-5 py-2 border border-zinc-700 text-white text-[10px] font-black uppercase tracking-widest rounded-sm transition-all duration-300 transform hover:-translate-y-1 hover:bg-white hover:text-black hover:border-white hover:shadow-[0_5px_15px_rgba(255,255,255,0.3)]">
                             Create Account
                         </a>
                     @endauth
@@ -112,11 +116,21 @@
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                     
-                    <div x-show="mobileOpen" @click.away="mobileOpen = false" class="absolute top-20 left-0 w-full bg-zinc-900 border-b border-zinc-800 p-6 flex flex-col gap-4 shadow-2xl z-50">
-                         @auth
+                    <div x-show="mobileOpen" @click.away="mobileOpen = false" 
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 -translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 -translate-y-2"
+                        class="absolute top-20 left-0 w-full bg-zinc-900 border-b border-zinc-800 p-6 flex flex-col gap-4 shadow-2xl z-50"
+                        style="display: none;">
+                        
+                        @auth
+                            {{-- Tampilan Saat Sudah Login --}}
                             <div class="flex items-center gap-3 mb-2 pb-4 border-b border-zinc-800">
                                 <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden">
-                                     @if(Auth::user()->foto)
+                                    @if(Auth::user()->foto)
                                         <img src="{{ asset('storage/'.Auth::user()->foto) }}" class="w-full h-full object-cover">
                                     @else
                                         <svg class="w-5 h-5 text-victory" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -124,17 +138,20 @@
                                 </div>
                                 <div class="text-white font-bold">{{ Auth::user()->nama }}</div>
                             </div>
-                            <a href="{{ route('booking.step1') }}" class="text-center w-full bg-victory text-black font-bold uppercase py-3 rounded-sm">Order Now</a>
-                            <a href="{{ route('booking.history') }}" class="text-zinc-400 font-bold uppercase text-sm hover:text-white">History</a>
-                            <a href="{{ route('profile.edit') }}" class="text-zinc-400 font-bold uppercase text-sm hover:text-white">Profile</a>
+
+                            <a href="{{ route('booking.step1') }}" class="text-center w-full bg-victory text-black font-bold uppercase py-3 rounded-sm hover:bg-white hover:text-black transition-all">Order Now</a>
+                            <a href="{{ route('booking.history') }}" class="text-zinc-400 font-bold uppercase text-sm hover:text-white transition-colors">History</a>
+                            <a href="{{ route('profile.edit') }}" class="text-zinc-400 font-bold uppercase text-sm hover:text-white transition-colors">Profile</a>
+                            
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button class="text-red-500 font-bold uppercase text-sm w-full text-left">Log Out</button>
+                                <button class="text-red-500 font-bold uppercase text-sm w-full text-left hover:text-red-400 transition-colors">Log Out</button>
                             </form>
-                         @else
-                            <a href="{{ route('login') }}" class="text-zinc-400 font-bold uppercase text-sm hover:text-white">Log In</a>
-                            <a href="{{ route('register') }}" class="text-center w-full border border-zinc-700 text-white font-bold uppercase py-3 rounded-sm">Create Account</a>
-                         @endauth
+                        @else
+                            {{-- Tampilan Saat Belum Login --}}
+                            <a href="{{ route('login') }}" class="text-zinc-400 font-bold uppercase text-sm hover:text-white transition-colors">Log In</a>
+                            <a href="{{ route('register') }}" class="text-center w-full border border-zinc-700 text-white font-bold uppercase py-3 rounded-sm hover:bg-white hover:text-black transition-all">Create Account</a>
+                        @endauth
                     </div>
                 </div>
             </div>

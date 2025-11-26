@@ -7,6 +7,73 @@
     <title>{{ config('app.name', 'Victory Motor') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600,800,900&display=swap" rel="stylesheet" />
+
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+
+    <script>
+        // Alert Success
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                timer: 3000,
+                showConfirmButton: false,
+                background: '#fff',
+                iconColor: '#F4E06D',
+                confirmButtonColor: '#000',
+                reverseButtons: true
+            });
+        @endif
+
+        // Alert Error (Manual dari Controller)
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: '{{ session('error') }}',
+                confirmButtonColor: '#000',
+                reverseButtons: true,
+            });
+        @endif
+
+        // Alert Validasi Gagal (Otomatis dari Laravel Validate)
+        @if($errors->any())
+            let errorMessages = '<ul class="text-left text-sm" style="list-style: none; padding: 0;">';
+            @foreach($errors->all() as $error)
+                errorMessages += '<li class="mb-1 text-red-600">⚠️ {{ $error }}</li>';
+            @endforeach
+            errorMessages += '</ul>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                html: errorMessages,
+                confirmButtonColor: '#000',
+                reverseButtons: true,
+            });
+        @endif
+
+        // Konfirmasi Delete/Action (Global Function)
+        function confirmAction(formId, message = 'Are you sure?') {
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#F4E06D',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Lanjutkan!',
+                cancelButtonText: 'Batal',
+                color: '#000',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            })
+        }
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .text-victory { color: #F4E06D; }

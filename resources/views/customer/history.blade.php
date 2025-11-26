@@ -10,9 +10,9 @@
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-bold text-gray-500 uppercase">Show</span>
                     <select name="per_page" class="ajax-filter bg-gray-50 border border-gray-200 text-sm font-bold rounded-lg focus:ring-[#F4E06D] focus:border-[#F4E06D] block w-18 pl-2 pr-8 py-2 cursor-pointer text-center">
-                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>5</option>
+                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>10</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>20</option>
                     </select>
                     <span class="text-xs font-bold text-gray-500 uppercase">entries</span>
                 </div>

@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Panel - {{ config('app.name', 'Victory Motor') }}</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
 
@@ -16,7 +18,7 @@
         @if(session('success'))
             Swal.fire({
                 icon: 'success',
-                title: 'Success!',
+                title: 'Berhasil!',
                 text: '{{ session('success') }}',
                 timer: 3000,
                 showConfirmButton: false,
@@ -27,12 +29,29 @@
             });
         @endif
 
-        // Alert Error
+        // Alert Error (Manual dari Controller)
         @if(session('error'))
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
+                title: 'Gagal!',
                 text: '{{ session('error') }}',
+                confirmButtonColor: '#000',
+                reverseButtons: true,
+            });
+        @endif
+
+        // Alert Validasi Gagal (Otomatis dari Laravel Validate)
+        @if($errors->any())
+            let errorMessages = '<ul class="text-left text-sm" style="list-style: none; padding: 0;">';
+            @foreach($errors->all() as $error)
+                errorMessages += '<li class="mb-1 text-red-600">⚠️ {{ $error }}</li>';
+            @endforeach
+            errorMessages += '</ul>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                html: errorMessages,
                 confirmButtonColor: '#000',
                 reverseButtons: true,
             });
@@ -41,13 +60,14 @@
         // Konfirmasi Delete/Action (Global Function)
         function confirmAction(formId, message = 'Are you sure?') {
             Swal.fire({
-                title: 'Confirmation',
+                title: 'Konfirmasi',
                 text: message,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#F4E06D',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, proceed!',
+                confirmButtonText: 'Ya, Lanjutkan!',
+                cancelButtonText: 'Batal',
                 color: '#000',
                 reverseButtons: true
             }).then((result) => {
