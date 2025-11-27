@@ -6,8 +6,15 @@
             <h1 class="text-2xl font-black text-gray-900 uppercase">Admin List</h1>
             <p class="text-sm text-gray-500">Manage who can access the dashboard.</p>
         </div>
-        <a href="{{ route('admin.users.create') }}" class="px-6 py-3 bg-black text-white font-bold uppercase tracking-wider rounded-lg hover:bg-victory hover:text-black transition-all shadow-lg flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+        <a href="{{ route('admin.users.create') }}" 
+            class="group px-6 py-3 bg-black text-white font-bold uppercase tracking-wider rounded-lg 
+                transition-all duration-300 ease-in-out
+                hover:-translate-y-1 hover:shadow-xl 
+                flex items-center gap-2">
+            {{-- Ikon membesar sedikit (scale-110) saat di-hover --}}
+            <svg class="w-5 h-5 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
             New Admin
         </a>
     </div>

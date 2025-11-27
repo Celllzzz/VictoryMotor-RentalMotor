@@ -3,6 +3,7 @@
 
     <div x-data="{ selectedMotor: null, motorPrice: 0, motorName: '', motorImage: '' }" class="animate-fade-in-up">
         
+        {{-- Progress Bar --}}
         <div class="flex items-center justify-center mb-12">
             <div class="relative flex flex-col items-center opacity-60">
                 <div class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-bold border-4 border-black">1</div>
@@ -24,6 +25,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             
+            {{-- Bagian Kiri: List Motor --}}
             <div class="lg:col-span-2">
                 <div class="flex items-end justify-between mb-6">
                     <h3 class="text-xl font-black uppercase tracking-tight text-zinc-900">Available Options</h3>
@@ -74,8 +76,10 @@
                 </div>
             </div>
 
+            {{-- Bagian Kanan: Form Data Diri --}}
             <div class="lg:col-span-1 lg:sticky lg:top-32">
                 
+                {{-- State: Belum Pilih Motor --}}
                 <div x-show="!selectedMotor" class="bg-white p-10 rounded-2xl border border-zinc-200 text-center shadow-sm border-dashed">
                     <div class="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-300 animate-pulse">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
@@ -84,6 +88,7 @@
                     <p class="text-xs text-zinc-400 mt-1">Choose a bike on the left.</p>
                 </div>
 
+                {{-- State: Sudah Pilih Motor (Form Muncul) --}}
                 <div x-show="selectedMotor" 
                      x-transition:enter="transition ease-out duration-500" 
                      x-transition:enter-start="opacity-0 translate-y-10 scale-95" 
@@ -95,7 +100,8 @@
                         <div class="w-2 h-2 rounded-full bg-victory animate-pulse"></div>
                     </div>
 
-                    <form action="{{ route('booking.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+                    {{-- ID Form: bookingForm --}}
+                    <form id="bookingForm" action="{{ route('booking.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
                         @csrf
                         <input type="hidden" name="id_motor" :value="selectedMotor">
                         
@@ -109,24 +115,24 @@
 
                         <div class="space-y-4">
                             
+                            {{-- NIK --}}
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1 tracking-wider">NIK (National ID)</label>
-                                <input type="text" name="nik" required maxlength="16" minlength="16" pattern="\d{16}"
+                                <input type="text" name="nik" maxlength="16" minlength="16"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)"
                                     placeholder="16 Digit Number"
                                     class="w-full bg-zinc-50 border-zinc-200 rounded-lg text-sm font-bold focus:border-black focus:ring-0 placeholder-zinc-300">
                                 <p class="text-[9px] text-zinc-400 mt-1">*Must be exactly 16 digits.</p>
                             </div>
 
+                            {{-- Gender --}}
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-2 tracking-wider">Gender</label>
                                 <div class="grid grid-cols-2 gap-3">
                                     
                                     <label class="relative flex items-center justify-center p-3 border border-zinc-200 overflow-hidden rounded-lg cursor-pointer transition-all duration-300 group hover:border-black hover:shadow-md">
-                                        <input type="radio" name="jk" value="L" class="peer hidden" required {{ old('jk') == 'L' ? 'checked' : '' }}>
-                                        
+                                        <input type="radio" name="jk" value="L" class="peer hidden" {{ old('jk') == 'L' ? 'checked' : '' }}>
                                         <div class="absolute inset-0 bg-victory transition-transform duration-300 origin-bottom scale-y-0 peer-checked:scale-y-100"></div>
-                                        
                                         <span class="relative z-10 font-bold text-xs uppercase tracking-wide text-zinc-600 transition-colors duration-300 group-hover:text-black peer-checked:text-black flex items-center gap-2">
                                             <span>Male (L)</span>
                                             <svg class="w-4 h-4 opacity-0 -translate-x-2 peer-checked:opacity-100 peer-checked:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -134,10 +140,8 @@
                                     </label>
 
                                     <label class="relative flex items-center justify-center p-3 border border-zinc-200 overflow-hidden rounded-lg cursor-pointer transition-all duration-300 group hover:border-black hover:shadow-md">
-                                        <input type="radio" name="jk" value="P" class="peer hidden" required {{ old('jk') == 'P' ? 'checked' : '' }}>
-                                        
+                                        <input type="radio" name="jk" value="P" class="peer hidden" {{ old('jk') == 'P' ? 'checked' : '' }}>
                                         <div class="absolute inset-0 bg-victory transition-transform duration-300 origin-bottom scale-y-0 peer-checked:scale-y-100"></div>
-                                        
                                         <span class="relative z-10 font-bold text-xs uppercase tracking-wide text-zinc-600 transition-colors duration-300 group-hover:text-black peer-checked:text-black flex items-center gap-2">
                                             <span>Female (P)</span>
                                             <svg class="w-4 h-4 opacity-0 -translate-x-2 peer-checked:opacity-100 peer-checked:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -147,22 +151,25 @@
                                 </div>
                             </div>
 
+                            {{-- Foto KTP --}}
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1 tracking-wider">Upload ID (KTP)</label>
-                                <input type="file" name="foto_ktp" required accept="image/*" class="w-full text-[10px] text-zinc-500 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-zinc-100 file:text-zinc-800 hover:file:bg-victory hover:file:text-black cursor-pointer bg-zinc-50 rounded-lg border border-zinc-200">
+                                <input type="file" name="foto_ktp" accept="image/*" class="w-full text-[10px] text-zinc-500 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-zinc-100 file:text-zinc-800 hover:file:bg-victory hover:file:text-black cursor-pointer bg-zinc-50 rounded-lg border border-zinc-200">
                             </div>
                             
+                            {{-- Alamat --}}
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1 tracking-wider">Current Address</label>
-                                <textarea name="alamat" required rows="2" class="w-full bg-zinc-50 border-zinc-200 rounded-lg text-sm font-medium focus:border-black focus:ring-0 placeholder-zinc-300 resize-none" placeholder="Full address..."></textarea>
+                                <textarea name="alamat" rows="2" class="w-full bg-zinc-50 border-zinc-200 rounded-lg text-sm font-medium focus:border-black focus:ring-0 placeholder-zinc-300 resize-none" placeholder="Full address..."></textarea>
                             </div>
 
+                            {{-- Payment Method --}}
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-2 tracking-wider">Payment Via</label>
                                 <div class="space-y-2">
                                     @foreach($jenisBayar as $jb)
                                     <label class="flex items-center p-3 border border-zinc-200 bg-white rounded-lg cursor-pointer hover:border-black hover:bg-zinc-50 transition-all group">
-                                        <input type="radio" name="id_jenis_bayar" value="{{ $jb->id }}" required class="text-black focus:ring-black bg-zinc-100 border-zinc-300">
+                                        <input type="radio" name="id_jenis_bayar" value="{{ $jb->id }}" class="text-black focus:ring-black bg-zinc-100 border-zinc-300">
                                         <span class="ml-3 font-bold text-xs uppercase tracking-wide text-zinc-600 group-hover:text-black">{{ $jb->jenis_bayar }}</span>
                                     </label>
                                     @endforeach
@@ -189,4 +196,77 @@
             </div>
         </div>
     </div>
+
+    {{-- Script Validasi Booking --}}
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            let isValid = true;
+            let errorList = '';
+
+            // Definisi Element Input
+            const nik = this.querySelector('[name="nik"]');
+            const jk = this.querySelector('input[name="jk"]:checked');
+            const foto = this.querySelector('[name="foto_ktp"]');
+            const alamat = this.querySelector('[name="alamat"]');
+            const bayar = this.querySelector('input[name="id_jenis_bayar"]:checked');
+
+            // 1. Validasi NIK (Harus 16 Digit)
+            if(!nik.value.trim() || nik.value.length !== 16) {
+                isValid = false;
+                nik.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                errorList += '<li><b>NIK</b> must be exactly 16 digits.</li>';
+                
+                nik.addEventListener('input', function() {
+                    this.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                }, {once: true});
+            }
+
+            // 2. Validasi Gender
+            if(!jk) {
+                isValid = false;
+                errorList += '<li>Please select your <b>Gender</b>.</li>';
+            }
+
+            // 3. Validasi Foto KTP (Wajib & Max 2MB)
+            if(foto.files.length === 0) {
+                isValid = false;
+                errorList += '<li>Please upload your <b>ID Card (KTP)</b>.</li>';
+            } else if (foto.files[0].size > 2 * 1024 * 1024) {
+                isValid = false;
+                errorList += '<li><b>ID Card</b> file size exceeds 2MB limit.</li>';
+            }
+
+            // 4. Validasi Alamat
+            if(!alamat.value.trim()) {
+                isValid = false;
+                alamat.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                errorList += '<li>Please enter your <b>Current Address</b>.</li>';
+
+                alamat.addEventListener('input', function() {
+                    this.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                }, {once: true});
+            }
+
+            // 5. Validasi Pembayaran
+            if(!bayar) {
+                isValid = false;
+                errorList += '<li>Please select a <b>Payment Method</b>.</li>';
+            }
+
+            // --- EKSEKUSI ---
+            if(!isValid) {
+                e.preventDefault(); // Stop Submit
+                
+                const finalHtml = `<ul class="text-left text-sm list-none pl-2 space-y-1">${errorList}</ul>`;
+
+                // Panggil Global Alert (Layout)
+                if(typeof showErrorAlert === 'function') {
+                    showErrorAlert(finalHtml);
+                } else {
+                    // Fallback
+                    Swal.fire({ icon: 'error', title: 'Validation Error', html: finalHtml });
+                }
+            }
+        });
+    </script>
 </x-app-layout>

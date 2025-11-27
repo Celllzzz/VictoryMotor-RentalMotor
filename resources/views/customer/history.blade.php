@@ -10,9 +10,9 @@
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-bold text-gray-500 uppercase">Show</span>
                     <select name="per_page" class="ajax-filter bg-gray-50 border border-gray-200 text-sm font-bold rounded-lg focus:ring-[#F4E06D] focus:border-[#F4E06D] block w-18 pl-2 pr-8 py-2 cursor-pointer text-center">
-                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>5</option>
-                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>10</option>
-                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>20</option>
+                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
                     </select>
                     <span class="text-xs font-bold text-gray-500 uppercase">entries</span>
                 </div>
@@ -101,12 +101,21 @@
                                 Expired
                             </span>
                         @else
-                            <span class="px-3 py-1.5 rounded-sm text-[10px] uppercase font-black tracking-widest border shadow-sm
-                                {{ $order->status == 'pending' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' : '' }}
-                                {{ $order->status == 'dibayar' ? 'bg-orange-100 text-orange-700 border-orange-200' : '' }} {{ $order->status == 'disetujui' ? 'bg-blue-100 text-blue-700 border-blue-200' : '' }}
-                                {{ $order->status == 'selesai' ? 'bg-green-100 text-green-700 border-green-200' : '' }}
-                                {{ $order->status == 'ditolak' ? 'bg-red-100 text-red-700 border-red-200' : '' }}">
-                                {{ $order->status == 'dibayar' ? 'Verifying' : $order->status }}
+                            @php
+                                $statusConfig = [
+                                    'pending'   => ['label' => 'Pending',    'class' => 'bg-yellow-100 text-yellow-700 border-yellow-200'],
+                                    'dibayar'   => ['label' => 'Verifying',  'class' => 'bg-orange-100 text-orange-700 border-orange-200'],
+                                    'disetujui' => ['label' => 'Active',     'class' => 'bg-blue-100 text-blue-700 border-blue-200'], // 'Disetujui' = Active (Sedang dipinjam)
+                                    'selesai'   => ['label' => 'Completed',  'class' => 'bg-green-100 text-green-700 border-green-200'],
+                                    'ditolak'   => ['label' => 'Rejected',   'class' => 'bg-red-100 text-red-700 border-red-200'],
+                                ];
+                                
+                                // Ambil config berdasarkan status, default ke abu-abu jika tidak ada
+                                $currentStatus = $statusConfig[$order->status] ?? ['label' => $order->status, 'class' => 'bg-gray-100 text-gray-700 border-gray-200'];
+                            @endphp
+
+                            <span class="px-3 py-1.5 rounded-sm text-[10px] uppercase font-black tracking-widest border shadow-sm {{ $currentStatus['class'] }}">
+                                {{ $currentStatus['label'] }}
                             </span>
                         @endif
                     </td>

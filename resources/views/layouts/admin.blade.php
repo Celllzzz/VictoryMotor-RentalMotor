@@ -14,60 +14,48 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Alert Success
-        @if(session('success'))
+        // ==========================================
+        //  GLOBAL SWEETALERT INTERFACE (ENGLISH)
+        // ==========================================
+
+        // 1. Success Alert (Auto-close)
+        window.showSuccessAlert = function(message) {
             Swal.fire({
                 icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('success') }}',
+                title: 'Success!',
+                html: message,
                 timer: 3000,
                 showConfirmButton: false,
                 background: '#fff',
-                iconColor: '#F4E06D',
+                iconColor: '#F4E06D', // Warna Kuning/Emas Victory
                 confirmButtonColor: '#000',
                 reverseButtons: true
             });
-        @endif
+        }
 
-        // Alert Error (Manual dari Controller)
-        @if(session('error'))
+        // 2. Error Alert (Manual close)
+        window.showErrorAlert = function(message) {
             Swal.fire({
                 icon: 'error',
-                title: 'Gagal!',
-                text: '{{ session('error') }}',
+                title: 'Error!',
+                html: message,
                 confirmButtonColor: '#000',
+                confirmButtonText: 'Close',
                 reverseButtons: true,
             });
-        @endif
+        }
 
-        // Alert Validasi Gagal (Otomatis dari Laravel Validate)
-        @if($errors->any())
-            let errorMessages = '<ul class="text-left text-sm" style="list-style: none; padding: 0;">';
-            @foreach($errors->all() as $error)
-                errorMessages += '<li class="mb-1 text-red-600">⚠️ {{ $error }}</li>';
-            @endforeach
-            errorMessages += '</ul>';
-
+        // 3. Confirmation Dialog (Delete/Action)
+        window.confirmAction = function(formId, message = 'Are you sure you want to proceed?') {
             Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                html: errorMessages,
-                confirmButtonColor: '#000',
-                reverseButtons: true,
-            });
-        @endif
-
-        // Konfirmasi Delete/Action (Global Function)
-        function confirmAction(formId, message = 'Are you sure?') {
-            Swal.fire({
-                title: 'Konfirmasi',
+                title: 'Confirmation',
                 text: message,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#F4E06D',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Lanjutkan!',
-                cancelButtonText: 'Batal',
+                confirmButtonColor: '#F4E06D', // Kuning
+                cancelButtonColor: '#d33',     // Merah
+                confirmButtonText: 'Yes, Proceed!',
+                cancelButtonText: 'Cancel',
                 color: '#000',
                 reverseButtons: true
             }).then((result) => {
@@ -76,6 +64,41 @@
                 }
             })
         }
+
+        // ==========================================
+        //  SERVER-SIDE FLASH MESSAGES HANDLER
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Handle Session Success
+            @if(session('success'))
+                showSuccessAlert("{{ session('success') }}");
+            @endif
+
+            // Handle Session Error
+            @if(session('error'))
+                showErrorAlert("{{ session('error') }}");
+            @endif
+
+            // Handle Validation Errors (Multiple)
+            @if($errors->any())
+                let errorHtml = '<ul class="text-left text-sm" style="list-style: none; padding: 0;">';
+                @foreach($errors->all() as $error)
+                    errorHtml += '<li class="mb-1 text-red-600">⚠️ {{ $error }}</li>';
+                @endforeach
+                errorHtml += '</ul>';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Failed!',
+                    html: errorHtml,
+                    confirmButtonColor: '#000',
+                    confirmButtonText: 'Fix Errors',
+                    reverseButtons: true,
+                });
+            @endif
+        });
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

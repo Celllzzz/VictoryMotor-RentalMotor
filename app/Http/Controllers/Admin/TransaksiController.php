@@ -63,12 +63,12 @@ class TransaksiController extends Controller
             // 2. Ubah status motor jadi 'disewa' agar tidak bisa dibooking orang lain
             Motor::where('id', $pesanan->id_motor)->update(['status' => 'disewa']);
             
-            return back()->with('success', 'Pesanan berhasil DISETUJUI. Motor sekarang berstatus DISEWA.');
+            return back()->with('success', 'Order successfully APPROVED. The motorcycle is now RENTED.');
         } else {
             // Jika ditolak, status jadi 'ditolak', motor tetap 'tersedia'
             $pesanan->update(['status' => 'ditolak']);
             
-            return back()->with('success', 'Pesanan berhasil DITOLAK.');
+            return back()->with('success', 'Order successfully REJECTED.');
         }
     }
 
@@ -81,7 +81,7 @@ class TransaksiController extends Controller
         
         // Validasi: Hanya pesanan yang sedang berjalan (disetujui) yang bisa dikembalikan
         if ($pesanan->status != 'disetujui') {
-            return back()->with('error', 'Hanya pesanan berstatus "Disetujui" yang bisa diproses selesai.');
+            return back()->with('error', 'Only orders with the status "Approved" can be processed to completion.');
         }
 
         // 1. Tandai pesanan selesai
@@ -90,6 +90,6 @@ class TransaksiController extends Controller
         // 2. Motor kembali tersedia untuk disewa
         Motor::where('id', $pesanan->id_motor)->update(['status' => 'tersedia']);
         
-        return back()->with('success', 'Motor telah DIKEMBALIKAN. Transaksi Selesai.');
+        return back()->with('success', 'The motorcycle has been RETURNED. Transaction Completed.');
     }
 }

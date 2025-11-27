@@ -68,7 +68,7 @@ class MotorController extends Controller
 
         Motor::create($data);
 
-        return redirect()->route('admin.motor.index')->with('success', 'Motor berhasil ditambahkan!');
+        return redirect()->route('admin.motor.index')->with('success', 'Motorbike added successfully!');
     }
 
     public function edit(Motor $motor)
@@ -104,7 +104,7 @@ class MotorController extends Controller
 
         $motor->update($data);
 
-        return redirect()->route('admin.motor.index')->with('success', 'Data motor diperbarui!');
+        return redirect()->route('admin.motor.index')->with('success', 'Motorbike data updated!');
     }
 
     public function destroy(Motor $motor)
@@ -115,6 +115,6 @@ class MotorController extends Controller
         }
         
         $motor->delete();
-        return back()->with('success', 'Motor berhasil dihapus!');
+        return back()->with('success', 'Motorbike successfully removed!');
     }
 }

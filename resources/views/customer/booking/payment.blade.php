@@ -104,7 +104,7 @@
                     
                     <div class="mb-6 text-left">
                         <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-2 tracking-wider">Upload Payment Proof</label>
-                        <input type="file" name="bukti_bayar" id="bukti_bayar" accept="image/*" required
+                        <input type="file" name="bukti_bayar" id="bukti_bayar" accept="image/*" 
                             class="cursor-pointer w-full text-xs text-zinc-400 file:mr-3 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-victory file:text-black hover:file:bg-white cursor-pointer bg-zinc-900 rounded-lg border border-zinc-800 focus:outline-none focus:border-victory transition-colors">
                     </div>
 
@@ -119,7 +119,7 @@
     </div>
 
     <script>
-        // 1. Countdown Logic
+        // 1. Countdown Logic 
         const deadline = new Date("{{ $deadline->toIso8601String() }}").getTime();
 
         const x = setInterval(function() {
@@ -132,7 +132,10 @@
                 timerEl.innerHTML = "EXPIRED";
                 timerEl.classList.remove('text-victory');
                 timerEl.classList.add('text-red-500');
-                // Disable form if needed
+                
+                // Disable form inputs
+                document.getElementById('bukti_bayar').disabled = true;
+                document.getElementById('btnPay').disabled = true;
                 return;
             }
 
@@ -146,21 +149,64 @@
                 (seconds < 10 ? "0" + seconds : seconds);
         }, 1000);
 
-        // 2. Enable Button Logic
+        // ---------------------------------------------------------
+        // 2. VALIDATION LOGIC 
+        // ---------------------------------------------------------
+        const paymentForm = document.getElementById('paymentForm');
         const fileInput = document.getElementById('bukti_bayar');
         const btnPay = document.getElementById('btnPay');
 
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
+        // Fungsi Helper untuk Ganti Style Tombol
+        function updateButtonState(isValid) {
+            if (isValid) {
                 btnPay.disabled = false;
-                // Ganti style jadi aktif (Kuning)
                 btnPay.classList.remove('bg-zinc-800', 'text-zinc-600', 'cursor-not-allowed', 'border-zinc-700');
                 btnPay.classList.add('bg-victory', 'text-black', 'hover:bg-white', 'shadow-[0_0_20px_rgba(244,224,109,0.4)]', 'transform', 'hover:-translate-y-1', 'border-transparent');
             } else {
                 btnPay.disabled = true;
-                // Reset style jadi mati (Abu)
                 btnPay.classList.add('bg-zinc-800', 'text-zinc-600', 'cursor-not-allowed', 'border-zinc-700');
                 btnPay.classList.remove('bg-victory', 'text-black', 'hover:bg-white', 'shadow-[0_0_20px_rgba(244,224,109,0.4)]', 'transform', 'hover:-translate-y-1', 'border-transparent');
+            }
+        }
+
+        // A. Cek Ukuran File Saat Dipilih
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const maxSize = 2 * 1024 * 1024; // 2MB
+
+                // Jika file terlalu besar
+                if (file.size > maxSize) {
+                    this.value = ''; // Reset input
+                    updateButtonState(false); // Matikan tombol
+
+                    // Tampilkan Error Global
+                    if(typeof showErrorAlert === 'function') {
+                        showErrorAlert('<b>Payment Proof</b> file size exceeds the 2MB limit.');
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'File Too Large', text: 'Max 2MB' });
+                    }
+                } else {
+                    // Jika valid, nyalakan tombol
+                    updateButtonState(true);
+                }
+            } else {
+                // Jika user cancel pilih file
+                updateButtonState(false);
+            }
+        });
+
+        // B. Cek Terakhir Saat Submit (Untuk keamanan)
+        paymentForm.addEventListener('submit', function(e) {
+            if (fileInput.files.length === 0) {
+                e.preventDefault();
+                const msg = 'Please upload your <b>Payment Proof</b> first.';
+                
+                if(typeof showErrorAlert === 'function') {
+                    showErrorAlert(msg);
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', html: msg });
+                }
             }
         });
     </script>

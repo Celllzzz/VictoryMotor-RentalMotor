@@ -40,7 +40,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::resource('motor', MotorController::class);
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
     Route::post('/transaksi/verifikasi/{id}', [TransaksiController::class, 'verifikasi'])->name('transaksi.verifikasi');
-    Route::post('/transaksi/kembali/{id}', [TransaksiController::class, 'kembalikan'])->name('transaksi.kembali');
+    Route::post('/transaksi/kembali/{id}', [TransaksiController::class, 'kembalikan'])->name('transaksi.kembalikan');
     Route::resource('users', AdminUserController::class);
 });
 

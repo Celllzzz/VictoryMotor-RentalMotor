@@ -39,7 +39,7 @@ class AdminUserController extends Controller
             'role' => 'admin', // Set otomatis jadi admin
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Admin baru berhasil ditambahkan!');
+        return redirect()->route('admin.users.index')->with('success', 'New admin successfully added!');
     }
 
     public function edit($id)
@@ -71,7 +71,7 @@ class AdminUserController extends Controller
 
         $admin->update($data);
 
-        return redirect()->route('admin.users.index')->with('success', 'Data admin diperbarui!');
+        return redirect()->route('admin.users.index')->with('success', 'Admin data updated!');
     }
 
     // Hapus Admin
@@ -81,11 +81,11 @@ class AdminUserController extends Controller
 
         // Cegah admin menghapus dirinya sendiri
         if (auth()->id() == $admin->id) {
-            return back()->with('error', 'Anda tidak bisa menghapus akun sendiri!');
+            return back()->with('error', "You can't delete your own account!");
         }
 
         $admin->delete();
 
-        return back()->with('success', 'Admin berhasil dihapus!');
+        return back()->with('success', 'Admin successfully deleted!');
     }
 }

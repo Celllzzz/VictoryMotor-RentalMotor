@@ -56,6 +56,8 @@
             <table class="w-full text-left text-sm">
                 <thead class="bg-black text-white uppercase text-xs font-bold tracking-wider">
                     <tr>
+                        {{-- 1. Tambah Header Kolom No --}}
+                        <th class="px-6 py-4 w-12">No</th>
                         <th class="px-6 py-4">#Order ID</th>
                         <th class="px-6 py-4">Customer Info</th>
                         <th class="px-6 py-4">Bike Details</th>
@@ -68,6 +70,12 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($pesanans as $order)
                     <tr class="hover:bg-yellow-50 transition-colors group">
+                        
+                        {{-- 2. Tambah Body Kolom No (Support Pagination) --}}
+                        <td class="px-6 py-4 font-bold text-gray-700">
+                            {{ $pesanans->firstItem() + $loop->index }}
+                        </td>
+
                         <td class="px-6 py-4 font-mono text-gray-500 font-bold">#{{ $order->id }}</td>
                         
                         <td class="px-6 py-4">
@@ -101,20 +109,33 @@
                             <div class="text-gray-800 font-medium">{{ $order->tgl_kembali->format('d M Y') }}</div>
                         </td>
 
-                        <td class="px-6 py-4">
-                            <div class="text-lg font-black text-black">Rp {{ number_format($order->total_harga) }}</div>
-                            <div class="text-xs text-gray-500 mb-2 font-medium">{{ $order->jenisBayar->jenis_bayar }}</div>
-                            
-                            @if($order->bukti_bayar)
-                                <a href="{{ filter_var($order->bukti_bayar, FILTER_VALIDATE_URL) ? $order->bukti_bayar : asset('storage/'.$order->bukti_bayar) }}" 
-                                   target="_blank" 
-                                   class="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase rounded border border-blue-200 hover:bg-blue-100 transition-colors">
-                                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                   View Receipt
-                                </a>
-                            @else
-                                <span class="text-[10px] text-red-500 font-bold bg-red-50 px-2 py-1 rounded border border-red-100">Unpaid</span>
-                            @endif
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex flex-col items-start justify-center">
+                                {{-- 1. Total Harga --}}
+                                <div class="text-sm font-black text-gray-900">
+                                    Rp {{ number_format($order->total_harga) }}
+                                </div>
+
+                                {{-- 2. Jenis Pembayaran --}}
+                                <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wide mb-1.5">
+                                    {{ $order->jenisBayar->jenis_bayar }}
+                                </div>
+                                
+                                {{-- 3. Tombol Bukti / Status Unpaid (Persis di bawah) --}}
+                                @if($order->bukti_bayar)
+                                    <a href="{{ filter_var($order->bukti_bayar, FILTER_VALIDATE_URL) ? $order->bukti_bayar : asset('storage/'.$order->bukti_bayar) }}" 
+                                    target="_blank" 
+                                    class="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase rounded border border-blue-200 hover:bg-blue-100 transition-colors w-full justify-center"
+                                    title="View Proof">
+                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    Proof
+                                    </a>
+                                @else
+                                    <span class="inline-block text-center w-full text-[10px] text-red-500 font-bold bg-red-50 px-2 py-1 rounded border border-red-100 uppercase tracking-wider">
+                                        Unpaid
+                                    </span>
+                                @endif
+                            </div>
                         </td>
 
                         <td class="px-6 py-4">
@@ -205,7 +226,8 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+                        {{-- 3. Update Colspan dari 7 menjadi 8 --}}
+                        <td colspan="8" class="px-6 py-12 text-center text-gray-400">
                             <div class="flex flex-col items-center justify-center">
                                 <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                 <p>No transactions found matching your search.</p>
